@@ -24,7 +24,7 @@ namespace Hypersonic
             int myId = int.Parse(inputs[2]);
             
             //Setup
-            var grid = new Grid();
+            Grid.CreateGrid();
             var player = new Player();
             var enemy = new Player();
             
@@ -38,7 +38,7 @@ namespace Hypersonic
                     string row = Console.ReadLine();
                     for (int j = 0; j < row.Length; j++)
                     {
-                        grid.AddToGrid(i, j, row[j]);
+                        Grid.SetAtPosition(i, j, row[j]);
                     }
                 }
                 int entities = int.Parse(Console.ReadLine());
@@ -54,11 +54,25 @@ namespace Hypersonic
 
                     switch(entityType)
                     {
-                        case EntityType.Player:
-                            HandlePlayer();
+                        case EntityTypes.Player:
+                            if (owner == myId)
+                            {
+                                player.Move(x, y);
+                            }
+                            else
+                            {
+                                enemy.Move(x, y);
+                            }
                             break;
-                        case EntityType.Bomb:
-                            HandleBomb();
+                        case EntityTypes.Bomb:
+                            Console.Error.WriteLine("Got Bomb entity");
+                            var bomb = Grid.GetAt(x, y) as Bomb;
+                            if (bomb == null)
+                            {
+                                Grid.SetAtPosition(x, y,'b');
+                                break;
+                            }
+                            bomb.CountDown();
                             break;
                         default:
                             break;
@@ -68,81 +82,260 @@ namespace Hypersonic
                 // Write an action using Console.WriteLine()
                 // To debug: Console.Error.WriteLine("Debug messages...");
                 
-                Console.Error.WriteLine($"");
-                
                 Console.WriteLine("BOMB 6 5");
             }
         }
-
-        static void HandlePlayer() {}
-
-        static void HandleBomb() {}
     }
 
     abstract class Entity
     {
-        public Entity() {}
+        public Entity(int entityType)
+        {
+            EntityType = entityType;
+        }
         
-        public Entity(int x, int y)
+        public Entity(int x, int y, int entityType) : this(entityType)
         {
             Position = new Position(x, y);
         }
         
         public Position Position { get; set; }
+
+        public int EntityType { get; }
     }
 
     class Player: Entity
     {    
-        public Player() : base()
+        public Player() : base(EntityTypes.Player)
         {}
         
-        public Player(int x, int y) : base(x, y)
+        public Player(int x, int y) : base(x, y, EntityTypes.Player)
         {}
+
+        public List<Position> AvailableMovement()
+        {
+            var positions = new List<Position>();
+
+            var entityLeft = Grid.GetAt(Position.X - 1, Position.Y);
+            if (entityLeft != null && entityLeft.EntityType == EntityTypes.Floor)
+                positions.Add(entityLeft.Position);
+
+            var entityRight = Grid.GetAt(Position.X + 1, Position.Y);
+            if (entityRight != null && entityRight.EntityType == EntityTypes.Floor)
+                positions.Add(entityRight.Position);
+
+            var entityDown = Grid.GetAt(Position.X, Position.Y - 1);
+            if (entityDown != null && entityDown.EntityType == EntityTypes.Floor)
+                positions.Add(entityDown.Position);
+
+            var entityUp = Grid.GetAt(Position.X, Position.Y + 1);
+            if (entityUp != null && entityUp.EntityType == EntityTypes.Floor)
+                positions.Add(entityUp.Position);
+
+            return positions;
+        }
+
+        public void Move(int x, int y)
+        {
+            if (Position == null)
+            {
+                Position = new Position(x, y);
+                Console.Error.WriteLine($"Player Initial movement to position [{x}, {y}]");
+                return;    
+            }
+
+            if (!CanMove(x, y))
+            {
+                Console.Error.WriteLine($"Cannot move to new position [{x}, {y}]");
+                return;
+            }
+
+            Position = new Position(x, y);
+            Console.Error.WriteLine($"Player moved to position [{x}, {y}]");
+        }
+
+        bool CanMove(int x, int y)
+        {
+            return AvailableMovement().Contains(new Position(x, y));
+        }
         
+    }
+
+    class Bomb: Entity
+    {
+        int timeRemaining = 8;
+        int explosionSize = 3;
+
+        List<Position> impactArea;
+
+        public Bomb() : base(EntityTypes.Bomb)
+        {
+            impactArea = GetImpactArea();
+        }
+        
+        public Bomb(int x, int y) : base(x, y, EntityTypes.Bomb)
+        {
+            impactArea = GetImpactArea();
+        }
+
+        public void CountDown()
+        {
+
+            if (timeRemaining == 0)
+            {
+                Explode();
+                return;
+            }
+
+            timeRemaining--;
+            Console.Error.WriteLine($"Bomb counting down, time remaining {timeRemaining}");
+        }
+
+        int Explode(bool destroy = true)
+        {
+            /*
+                Get All entities in bombs range and check what happens
+                      -
+                      -
+                      -
+                - - - * - - -
+                      -
+                      -
+                      -
+            */
+            var destroyedBoxes = new List<Box>();
+
+            foreach(var position in impactArea)
+            {
+                var entity = Grid.GetAt(position);
+                if(entity == null)
+                    continue;
+
+                //Cannot use type pattern matching in CodinGame
+                switch(entity.EntityType)
+                {
+                    case EntityTypes.Floor:
+                        continue;
+                    case EntityTypes.Player:
+                        //for now player takes no damage from bombs (Wood 3)
+                        continue;
+                    case EntityTypes.Box:
+                        //Change box to floor
+                        var box = entity as Box;
+                        if (box == null)
+                        {
+                            Console.Error.WriteLine($"Cannot destroy box - null");
+                            continue;
+                        }
+
+                        if (destroy)
+                            box.Destroy();
+
+                        destroyedBoxes.Add(box);
+                        continue;
+                }
+            }
+
+            Console.Error.WriteLine($"Bomb exploaded! Destroyed {destroyedBoxes.Count} boxes.");
+
+            return destroyedBoxes.Count;
+        }
+
+        List<Position> GetImpactArea()
+        {
+            var positions = new List<Position>();
+            positions.Add(new Position(Position.X, Position.Y));
+
+            for (int i = 1; i <= explosionSize; i++)
+            {
+                positions.Add(new Position(Position.X - i, Position.Y));
+                positions.Add(new Position(Position.X + i, Position.Y));
+                positions.Add(new Position(Position.X, Position.Y - i));
+                positions.Add(new Position(Position.X, Position.Y + i));
+            }
+
+            return positions;
+        }
+
     }
 
     class Box: Entity
     {
-        public Box() : base()
+        public Box() : base(EntityTypes.Box)
         {}
         
-        public Box(int x, int y) : base(x, y)
+        public Box(int x, int y) : base(x, y, EntityTypes.Box)
         {}
+
+        public void Destroy()
+        {
+            //Change the box for floor on Grid
+            Grid.SetAtPosition(Position, '.');
+        }
     }
 
     class Floor: Entity
     {
-        public Floor() : base()
+        public Floor() : base(EntityTypes.Floor)
         {}
         
-        public Floor(int x, int y) : base(x, y)
+        public Floor(int x, int y) : base(x, y, EntityTypes.Floor)
         {}
     }
 
-    class Grid
+    static class Grid
     {
         
-        readonly Dictionary<Position, Entity> grid;
+        static Dictionary<Position, Entity> grid;
         
-        public Grid()
+        public static void CreateGrid()
         {
             grid = new Dictionary<Position, Entity>();        
         }
         
-        public void AddToGrid(int x, int y, char c)
+        public static void SetAtPosition(int x, int y, char c)
         {        
-            
+            // Console.Error.WriteLine($"Setting grid: [{x}, {y}, {c}]");
+
             switch(c)
             {
-                case '.':
-                    var box = new Box(x, y);
-                    grid.Add(box.Position, box);
-                    break;
                 case '0':
+                    var box = new Box(x, y);
+                    grid[box.Position] = box;
+                    break;
+                case '.':
                     var floor = new Floor(x, y);
-                    grid.Add(floor.Position, floor);
+                    
+                    //This could be overhead...
+                    var b = GetAt(floor.Position);
+                    if (b != null && (b as Bomb) != null)
+                        break;
+
+                    grid[floor.Position] = floor;
+                    break;
+                case 'b':
+                    var bomb = new Bomb(x, y);
+                    grid[bomb.Position] = bomb;
                     break;
             }
+        }
+
+        public static void SetAtPosition(Position position, char c)
+        {
+            SetAtPosition(position.X, position.Y, c);
+        }
+
+        public static Entity GetAt(Position position)
+        {
+            if (grid.ContainsKey(position))
+                return grid[position];
+
+            return null;
+        }
+
+        public static Entity GetAt(int x, int y)
+        {
+            return GetAt(new Position(x, y));
         }
     }
 
@@ -170,9 +363,11 @@ namespace Hypersonic
         }
     }
 
-    static class EntityType
+    static class EntityTypes
     {
         public const int Player = 0;
         public const int Bomb = 1;
+        public const int Box = 2;
+        public const int Floor = 3;
     }
 }
