@@ -1,0 +1,32 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "CodeStrikers",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "buildCodeStrikers",
+      "program": "${workspaceFolder}/CodersStrikeBack/CSharp/bin/Debug/netcoreapp2.2/CodersStrikeBack.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/CodersStrikeBack/CSharp",
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "AsciiArt",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "buildAsciiArt",
+      "program": "${workspaceFolder}/Puzzles/AsciiArt/CSharp/bin/Debug/netcoreapp2.2/AsciiArt.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/Puzzles/AsciiArt/CSharp",
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+  ]
+}

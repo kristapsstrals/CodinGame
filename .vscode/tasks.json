@@ -1,0 +1,25 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "buildCodeStrikers",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/CodersStrikeBack/CSharp/CodersStrikeBack.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "buildAsciiArt",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Puzzles/AsciiArt/CSharp/AsciiArt.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
