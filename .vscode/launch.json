@@ -9,9 +9,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "buildCodeStrikers",
-      "program": "${workspaceFolder}/CodersStrikeBack/CSharp/bin/Debug/netcoreapp2.2/CodersStrikeBack.dll",
+      "program": "${workspaceFolder}/Multiplayer/CodersStrikeBack/CSharp/bin/Debug/netcoreapp2.2/CodersStrikeBack.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/CodersStrikeBack/CSharp",
+      "cwd": "${workspaceFolder}/Multiplayer/CodersStrikeBack/CSharp",
       "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
@@ -24,6 +24,18 @@
       "program": "${workspaceFolder}/Puzzles/AsciiArt/CSharp/bin/Debug/netcoreapp2.2/AsciiArt.dll",
       "args": [],
       "cwd": "${workspaceFolder}/Puzzles/AsciiArt/CSharp",
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "ChuckNorris",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "buildChuckNorris",
+      "program": "${workspaceFolder}/Puzzles/ChuckNorris/CSharp/bin/Debug/netcoreapp2.2/ChuckNorris.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/Puzzles/ChuckNorris/CSharp",
       "console": "integratedTerminal",
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"

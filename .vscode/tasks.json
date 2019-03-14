@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/CodersStrikeBack/CSharp/CodersStrikeBack.csproj"
+                "${workspaceFolder}/Multiplayer/CodersStrikeBack/CSharp/CodersStrikeBack.csproj"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -18,6 +18,16 @@
             "args": [
                 "build",
                 "${workspaceFolder}/Puzzles/AsciiArt/CSharp/AsciiArt.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "buildChuckNorris",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Puzzles/ChuckNorris/CSharp/ChuckNorris.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
