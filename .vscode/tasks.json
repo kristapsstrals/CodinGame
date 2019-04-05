@@ -30,6 +30,16 @@
                 "${workspaceFolder}/Puzzles/ChuckNorris/CSharp/ChuckNorris.csproj"
             ],
             "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "buildCodeOfTheRings",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/Puzzles/CodeOfTheRings/CSharp/CodeOfTheRings.csproj"
+            ],
+            "problemMatcher": "$msCompile"
         }
     ]
 }

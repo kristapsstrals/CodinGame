@@ -40,5 +40,17 @@
       "stopAtEntry": false,
       "internalConsoleOptions": "openOnSessionStart"
     },
+    {
+      "name": "CodeOfTheRings",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "buildCodeOfTheRings",
+      "program": "${workspaceFolder}/Puzzles/CodeOfTheRings/CSharp/bin/Debug/netcoreapp2.2/CodeOfTheRings.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/Puzzles/CodeOfTheRings/CSharp",
+      "console": "integratedTerminal",
+      "stopAtEntry": false,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
   ]
 }
